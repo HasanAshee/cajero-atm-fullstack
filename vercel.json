@@ -2,24 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/angular.json",
-      "use": "@vercel/angular",
-      "config": {
-        "outputPath": "dist/atm-app"
-      }
+      "src": "frontend/package.json",
+      "use": "@vercel/angular"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
