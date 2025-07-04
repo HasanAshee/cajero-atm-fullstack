@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
-const dbURI = 'mongodb+srv://atm_user:iyQtDrRv9ROOrgPZ@cluster0.tywrrxs.mongodb.net/atm-db?retryWrites=true&w=majority&appName=Cluster0'
+const dbURI = process.env.DB_URI;
    
-    //mongodb+srv://atm_user:<iyQtDrRv9ROOrgPZ>@cluster0.tywrrxs.mongodb.net/cajero-db?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectDB = async () => {
   try {
