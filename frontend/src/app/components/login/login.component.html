@@ -1,0 +1,22 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-title>Bienvenido al Cajero ATM</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="onLogin()">
+        <mat-form-field appearance="outline">
+             <mat-label>Nombre de Usuario</mat-label>
+             <input matInput type="text" placeholder="Ej: Juan Programador" [(ngModel)]="user" name="user">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Ingresa tu PIN</mat-label>
+            <input matInput type="password" placeholder="****" [(ngModel)]="pin" name="pin">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit">Ingresar</button>
+
+        <button mat-stroked-button routerLink="/register" class="register-button" type="button">Crear nueva cuenta</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

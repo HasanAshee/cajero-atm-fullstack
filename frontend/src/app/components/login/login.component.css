@@ -1,0 +1,20 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+mat-card {
+  text-align: center;
+  width: 400px;
+}
+mat-form-field {
+  width: 100%;
+}
+button {
+  width: 100%;
+}
+.register-button {
+  width: 100%;
+  margin-top: 15px;
+}

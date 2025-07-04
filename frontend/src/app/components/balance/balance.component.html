@@ -1,0 +1,10 @@
+<div class="balance-container">
+  <mat-card>
+    <mat-card-title>Consulta de Saldo</mat-card-title>
+    <mat-card-content>
+      <p class="saldo-label">Tu saldo actual es:</p>
+      <p class="saldo-amount">{{ currentBalance | currency:'ARS':'symbol':'1.2-2' }}</p>
+      <button mat-raised-button color="primary" routerLink="/menu">Volver al Menú</button>
+    </mat-card-content>
+  </mat-card>
+</div>

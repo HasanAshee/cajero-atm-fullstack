@@ -1,0 +1,29 @@
+.history-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px;
+}
+mat-card {
+  width: 600px;
+}
+.amount {
+  margin-left: auto;
+  font-weight: bold;
+}
+.deposit-icon, .deposit-amount {
+  color: #4CAF50; /* Verde */
+}
+.withdraw-icon, .withdraw-amount {
+  color: #F44336; /* Rojo */
+}
+.no-transactions-message {
+  text-align: center;
+  padding: 20px;
+  color: grey;
+}
+button {
+  margin-top: 20px;
+  width: 100%;
+}

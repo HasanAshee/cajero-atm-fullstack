@@ -1,0 +1,19 @@
+.register-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+mat-card {
+  width: 400px;
+}
+mat-form-field {
+  width: 100%;
+}
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}

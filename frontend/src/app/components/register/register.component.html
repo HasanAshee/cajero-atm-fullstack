@@ -1,0 +1,28 @@
+<div class="register-container">
+  <mat-card>
+    <mat-card-title>Crear Nueva Cuenta</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="onRegister()">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre de Usuario</mat-label>
+          <input matInput type="text" [(ngModel)]="user" name="user" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>PIN (4 dígitos)</mat-label>
+          <input matInput type="password" [(ngModel)]="pin" name="pin" required minlength="4" maxlength="4">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Depósito Inicial (opcional)</mat-label>
+          <input matInput type="number" [(ngModel)]="initialBalance" name="initialBalance">
+        </mat-form-field>
+
+        <div class="action-buttons">
+          <button mat-flat-button color="warn" routerLink="/login">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit">Crear Cuenta</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

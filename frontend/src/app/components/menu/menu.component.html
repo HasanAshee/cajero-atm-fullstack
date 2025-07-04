@@ -1,0 +1,15 @@
+<div class="menu-container">
+  <mat-card>
+    <mat-card-title>¡Hola, {{ userName }}!</mat-card-title>
+    <mat-card-content>
+      <p>Por favor, elige una operación.</p>
+      <div class="button-container">
+        <button mat-raised-button color="primary" routerLink="/balance">Consultar Saldo</button>
+        <button mat-raised-button color="primary" routerLink="/withdraw">Retirar Dinero</button>
+        <button mat-raised-button color="primary" routerLink="/deposit">Depositar Dinero</button>
+        <button mat-stroked-button routerLink="/history">Ver Historial</button>
+        <button mat-flat-button color="warn" (click)="logout()">Salir</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,18 @@
+.withdraw-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 10px; /* Espacio entre botones */
+  margin-top: 20px;
+}

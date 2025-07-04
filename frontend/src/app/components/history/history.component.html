@@ -1,0 +1,25 @@
+<div class="history-container">
+  <mat-card>
+    <mat-card-title>Historial de Transacciones</mat-card-title>
+    <mat-card-content>
+      <mat-list *ngIf="transactions.length > 0; else noTransactions">
+        <mat-list-item *ngFor="let tx of transactions">
+          <mat-icon matListItemIcon [ngClass]="tx.type === 'Depósito' ? 'deposit-icon' : 'withdraw-icon'">
+            {{ tx.type === 'Depósito' ? 'arrow_upward' : 'arrow_downward' }}
+          </mat-icon>
+          <div matListItemTitle>{{ tx.type }}</div>
+          <div matListItemLine>{{ tx.date | date:'short' }}</div>
+          <span class="amount" [ngClass]="tx.type === 'Depósito' ? 'deposit-amount' : 'withdraw-amount'">
+            {{ tx.amount | currency:'ARS' }}
+          </span>
+        </mat-list-item>
+      </mat-list>
+
+      <ng-template #noTransactions>
+        <p class="no-transactions-message">Aún no has realizado ninguna transacción.</p>
+      </ng-template>
+
+      <button mat-raised-button color="primary" routerLink="/menu">Volver al Menú</button>
+    </mat-card-content>
+  </mat-card>
+</div>

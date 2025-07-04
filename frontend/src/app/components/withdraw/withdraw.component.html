@@ -1,0 +1,18 @@
+<div class="withdraw-container">
+  <mat-card>
+    <mat-card-title>Retirar Dinero</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="onWithdraw()">
+        <mat-form-field appearance="outline">
+          <mat-label>Monto a retirar</mat-label>
+          <input matInput type="number" placeholder="Ej: 500" [(ngModel)]="amountToWithdraw" name="amount">
+        </mat-form-field>
+
+        <div class="action-buttons">
+          <button mat-flat-button color="warn" routerLink="/menu">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit">Confirmar Retiro</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
