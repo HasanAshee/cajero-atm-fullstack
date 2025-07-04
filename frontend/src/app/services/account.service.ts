@@ -14,7 +14,7 @@ export interface Transaction {
     providedIn: 'root'
 })
 export class AccountService {
-    private apiUrl = 'https://cajero-api.onrender.com/api'
+    private apiUrl = 'https://cajero-api.onrender.com/'
     private loggedIn = false;
     private accountId: string | null = null;
     private userName: string | null = null;
