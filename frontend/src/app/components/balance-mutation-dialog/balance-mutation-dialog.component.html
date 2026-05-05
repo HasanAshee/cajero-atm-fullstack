@@ -1,0 +1,78 @@
+<div class="dialog">
+  <header class="dialog-header">
+    <h2 class="dialog-title">{{ title }}</h2>
+    <p class="dialog-subtitle">{{ subtitle }}</p>
+  </header>
+
+  <div class="dialog-body">
+
+    <!-- Saldo actual de referencia -->
+    <div class="balance-ref">
+      <span class="balance-ref-label">Saldo actual</span>
+      <span class="balance-ref-value">$ {{ data.currentBalance | number: '1.2-2' }}</span>
+    </div>
+
+    <!-- Input de monto -->
+    <div class="form-group">
+      <label class="form-label" for="amount">Monto</label>
+      <div class="input-wrapper">
+        <span class="input-prefix">$</span>
+        <input
+          id="amount"
+          type="number"
+          class="form-input"
+          [ngModel]="amount()"
+          (ngModelChange)="amount.set($event)"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+          [disabled]="loading()"
+          (keyup.enter)="onSubmit()"
+        />
+      </div>
+    </div>
+
+    <!-- Quick amounts -->
+    <div class="quick-amounts">
+      @for (qa of quickAmounts; track qa) {
+        <button
+          type="button"
+          class="quick-amount-btn"
+          (click)="selectQuickAmount(qa)"
+          [disabled]="loading()"
+        >
+          $ {{ qa | number: '1.0-0' }}
+        </button>
+      }
+    </div>
+
+    <!-- Error message -->
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+  </div>
+
+  <footer class="dialog-footer">
+    <button
+      type="button"
+      class="btn btn-ghost"
+      (click)="onCancel()"
+      [disabled]="loading()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onSubmit()"
+      [disabled]="loading()"
+    >
+      @if (loading()) {
+        Procesando…
+      } @else {
+        {{ submitLabel }}
+      }
+    </button>
+  </footer>
+</div>

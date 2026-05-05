@@ -2,8 +2,10 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { BalanceMutationDialogComponent, BalanceMutationDialogData } from '../balance-mutation-dialog/balance-mutation-dialog.component';
 import { AccountService } from '../../services/account.service';
 import { Transaction } from '../../models/account.model';
+import { TransferDialogComponent, TransferDialogData } from '../transfer-dialog/transfer-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +23,8 @@ export class DashboardComponent implements OnInit {
   balance = signal(0);
   transactions = signal<Transaction[]>([]);
   errorMessage = signal<string | null>(null);
+
+  private dialog = inject(MatDialog);
 
   // User Data
   userName = this.accountService.user;
@@ -84,18 +88,54 @@ export class DashboardComponent implements OnInit {
   // ─── Actions ───
 
   openDeposit(): void {
-    // TODO: abrir modal de depósito
-    console.log('TODO: abrir modal depósito');
+    const dialogRef = this.dialog.open(BalanceMutationDialogComponent, {
+      data: {
+        mode: 'deposit',
+        currentBalance: this.balance()
+      } as BalanceMutationDialogData,
+      autoFocus: 'first-tabbable',
+      restoreFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.loadDashboard();
+      }
+    });
   }
 
   openWithdraw(): void {
-    // TODO: abrir modal de retiro
-    console.log('TODO: abrir modal retiro');
+    const dialogRef = this.dialog.open(BalanceMutationDialogComponent, {
+      data: {
+        mode: 'withdraw',
+        currentBalance: this.balance()
+      } as BalanceMutationDialogData,
+      autoFocus: 'first-tabbable',
+      restoreFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.loadDashboard();
+      }
+    });
   }
 
   openTransfer(): void {
-    // TODO: abrir modal de transferencia
-    console.log('TODO: abrir modal transferencia');
+    const dialogRef = this.dialog.open(TransferDialogComponent, {
+      data: {
+        currentBalance: this.balance(),
+        currentUsername: this.userName() ?? ''
+      } as TransferDialogData,
+      autoFocus: 'first-tabbable',
+      restoreFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.loadDashboard();
+      }
+    });
   }
 
   logout(): void {
