@@ -1,0 +1,369 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ───────────── Topbar ───────────── */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 32px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-mark {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #d4af37;
+}
+
+.brand-text {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: #a3a3a3;
+  margin-top: 4px;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #e8dcc4;
+  font-weight: 500;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #a3a3a3;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.btn-ghost:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+/* ───────────── Loading & errors ───────────── */
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #a3a3a3;
+}
+
+.error-state {
+  color: #ef4444;
+}
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: #d4af37;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 12px;
+  font: inherit;
+}
+
+/* ───────────── Cards superiores ───────────── */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.card-balance {
+  background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+  border: 1px solid #d4af3744;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-balance::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #d4af3722 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.card-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a3a3a3;
+  margin: 0 0 12px;
+}
+
+.card-amount-large {
+  font-size: 36px;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.card-amount-medium {
+  font-size: 22px;
+  font-weight: 500;
+  color: #f5f5f5;
+  margin: 0 0 8px;
+}
+
+.card-income .card-amount-medium {
+  color: #10b981;
+}
+
+.card-expense .card-amount-medium {
+  color: #ef4444;
+}
+
+.card-hint {
+  font-size: 12px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+/* ───────────── Acciones ───────────── */
+
+.actions-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.action-btn {
+  flex: 1;
+  background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #f5f5f5;
+  padding: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.15s;
+}
+
+.action-btn:hover {
+  background-color: #242424;
+  border-color: #d4af37;
+}
+
+.action-icon {
+  font-size: 18px;
+  color: #d4af37;
+}
+
+.action-btn-primary {
+  background-color: #d4af37;
+  border-color: #d4af37;
+  color: #0a0a0a;
+}
+
+.action-btn-primary .action-icon {
+  color: #0a0a0a;
+}
+
+.action-btn-primary:hover {
+  background-color: #b8941f;
+  border-color: #b8941f;
+}
+
+/* ───────────── Movimientos ───────────── */
+
+.transactions-section {
+  background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin: 0;
+}
+
+.section-count {
+  font-size: 12px;
+  color: #6b6b6b;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #a3a3a3;
+}
+
+.empty-hint {
+  font-size: 13px;
+  color: #6b6b6b;
+  margin-top: 8px;
+}
+
+.transactions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transaction-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #242424;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.tx-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #242424;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.tx-icon.tx-icon-positive {
+  color: #10b981;
+}
+
+.tx-info {
+  min-width: 0;
+}
+
+.tx-type {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f5f5f5;
+  margin: 0 0 4px;
+}
+
+.tx-meta {
+  font-size: 12px;
+  color: #a3a3a3;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-dot {
+  margin: 0 6px;
+  color: #6b6b6b;
+}
+
+.tx-right {
+  text-align: right;
+}
+
+.tx-amount {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.amount-positive {
+  color: #10b981;
+}
+
+.amount-negative {
+  color: #ef4444;
+}
+
+.tx-date {
+  font-size: 11px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+/* ───────────── Responsive ───────────── */
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 20px 16px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-row {
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    min-width: calc(50% - 6px);
+  }
+
+  .action-btn-primary {
+    flex: 1 0 100%;
+  }
+
+  .card-amount-large {
+    font-size: 28px;
+  }
+}

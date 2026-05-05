@@ -1,84 +1,157 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, tap } from 'rxjs';
-
-export interface Transaction {
-    type: 'Retiro' | 'Depósito';
-    amount: number;
-    date: Date;
-}
+import { environment } from '../../environments/environment';
+import { STORAGE_KEYS } from './storage-keys';
+import {
+  AccountInfo,
+  AuthResponse,
+  BalanceMutationResponse,
+  Transaction,
+  TransferRequest,
+  TransferResponse
+} from '../models/account.model';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class AccountService {
-    private apiUrl = 'https://cajero-api.onrender.com/'
-    private loggedIn = false;
-    private accountId: string | null = null;
-    private userName: string | null = null;
+  private apiUrl = environment.apiUrl;
 
-    constructor(
-        private http: HttpClient,
-        private router: Router,
-        private snackBar: MatSnackBar
-    ) {}
+  // Estado reactivo con signals
+  private _user = signal<string | null>(this.readStoredUser());
+  private _accountId = signal<string | null>(this.readStoredAccountId());
 
-    private openSnackBar(message: string, panelClass: 'success-snackbar' | 'error-snackbar') {
-        this.snackBar.open(message, 'Cerrar', {
-            duration: 3000,
-            verticalPosition: 'top',
-            panelClass: [panelClass]
-        });
-    }
+  // Derivados
+  readonly user = this._user.asReadonly();
+  readonly accountId = this._accountId.asReadonly();
+  readonly isLoggedIn = computed(() => !!this._user() && !!this.getToken());
 
-    login(user: string, pin: string): Observable<any> {
-        return this.http.post(`${this.apiUrl}/auth/login`, { user, pin }).pipe(
-            tap((response: any) => {
-                this.loggedIn = true;
-                this.accountId = response.accountId;
-                this.userName = user;
-            })
-        );
-    }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
 
-    logout(): void {
-        this.loggedIn = false;
-        this.accountId = null;
-        this.router.navigate(['/login']);
-        this.openSnackBar('Sesión cerrada correctamente.', 'success-snackbar');
-    }
+  // ────────────────────────────────────────────────────────────
+  // Helpers private
+  // ────────────────────────────────────────────────────────────
 
-    register(user: string, pin: string, balance: number): Observable<any> {
-      return this.http.post(`${this.apiUrl}/auth/register`, { user, pin, balance });
-    }
+  private openSnackBar(
+    message: string,
+    panelClass: 'success-snackbar' | 'error-snackbar'
+  ) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      verticalPosition: 'top',
+      panelClass: [panelClass]
+    });
+  }
 
-    isLoggedIn(): boolean {
-        return this.loggedIn;
-    }
+  private readStoredUser(): string | null {
+    return localStorage.getItem(STORAGE_KEYS.USER);
+  }
 
-    getUserName(): string {
-        return this.userName || '';
-    }
+  private readStoredAccountId(): string | null {
+    return localStorage.getItem(STORAGE_KEYS.ACCOUNT_ID);
+  }
 
-    getBalance(): Observable<{ balance: number }> {
-        return this.http.post<{ balance: number }>(`${this.apiUrl}/account/balance`, { accountId: this.accountId });
-    }
+  private storeSession(token: string, user: string, accountId: string): void {
+    localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    localStorage.setItem(STORAGE_KEYS.USER, user);
+    localStorage.setItem(STORAGE_KEYS.ACCOUNT_ID, accountId);
+    this._user.set(user);
+    this._accountId.set(accountId);
+  }
 
-    withdraw(amount: number): Observable<any> {
-        return this.http.post(`${this.apiUrl}/account/withdraw`, { accountId: this.accountId, amount }).pipe(
-            tap(() => this.openSnackBar('Retiro exitoso.', 'success-snackbar'))
-        );
-    }
+  private clearSession(): void {
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER);
+    localStorage.removeItem(STORAGE_KEYS.ACCOUNT_ID);
+    this._user.set(null);
+    this._accountId.set(null);
+  }
 
-    deposit(amount: number): Observable<any> {
-        return this.http.post(`${this.apiUrl}/account/deposit`, { accountId: this.accountId, amount }).pipe(
-            tap(() => this.openSnackBar('Depósito exitoso.', 'success-snackbar'))
-        );
-    }
+  // ────────────────────────────────────────────────────────────
+  // API public
+  // ────────────────────────────────────────────────────────────
 
-    getTransactions(): Observable<Transaction[]> {
-        return this.http.post<Transaction[]>(`${this.apiUrl}/account/history`, { accountId: this.accountId });
-    }
+  getToken(): string | null {
+    return localStorage.getItem(STORAGE_KEYS.TOKEN);
+  }
+
+  getUserName(): string {
+    return this._user() ?? '';
+  }
+
+  // ─── auth ───
+
+  login(user: string, pin: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/auth/login`, { user, pin })
+      .pipe(
+        tap((response) => {
+          this.storeSession(response.token, response.user, response.accountId);
+        })
+      );
+  }
+
+  register(user: string, pin: string, balance: number): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/auth/register`, { user, pin, balance })
+      .pipe(
+        tap((response) => {
+          this.storeSession(response.token, response.user, response.accountId);
+        })
+      );
+  }
+
+  logout(): void {
+    this.clearSession();
+    this.router.navigate(['/login']);
+    this.openSnackBar('Sesión cerrada correctamente.', 'success-snackbar');
+  }
+
+  // ─── account ───
+
+  getMe(): Observable<AccountInfo> {
+    return this.http.get<AccountInfo>(`${this.apiUrl}/account/me`);
+  }
+
+  getBalance(): Observable<{ balance: number }> {
+    return this.http.get<{ balance: number }>(`${this.apiUrl}/account/balance`);
+  }
+
+  getTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.apiUrl}/account/history`);
+  }
+
+  // ─── operations ───
+
+  deposit(amount: number): Observable<BalanceMutationResponse> {
+    return this.http
+      .post<BalanceMutationResponse>(`${this.apiUrl}/account/deposit`, { amount })
+      .pipe(tap(() => this.openSnackBar('Depósito exitoso.', 'success-snackbar')));
+  }
+
+  withdraw(amount: number): Observable<BalanceMutationResponse> {
+    return this.http
+      .post<BalanceMutationResponse>(`${this.apiUrl}/account/withdraw`, { amount })
+      .pipe(tap(() => this.openSnackBar('Retiro exitoso.', 'success-snackbar')));
+  }
+
+  transfer(request: TransferRequest): Observable<TransferResponse> {
+    return this.http
+      .post<TransferResponse>(`${this.apiUrl}/account/transfer`, request)
+      .pipe(
+        tap((response) =>
+          this.openSnackBar(
+            `Transferencia exitosa a ${response.recipient}.`,
+            'success-snackbar'
+          )
+        )
+      );
+  }
 }

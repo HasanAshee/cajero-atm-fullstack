@@ -4,7 +4,8 @@ import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { AccountService, Transaction } from '../../services/account.service';
+import { AccountService } from '../../services/account.service';
+import { Transaction } from '../../models/account.model';
 import { MatListModule } from '@angular/material/list';
 
 @Component({

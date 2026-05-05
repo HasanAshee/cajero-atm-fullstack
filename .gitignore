@@ -1,20 +1,39 @@
-# Dependencias
+# Dependencies
 node_modules/
-frontend/node_modules/
+**/node_modules/
 
-# Archivos de build
-dist/
-frontend/dist/
-frontend/.angular/
-
-# Archivos de log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Archivos de entorno
+# Environment files
 .env
+**/.env
+.env.local
+**/.env.local
+.env.development
+**/.env.development
+.env.production
+**/.env.production
 
-# Archivos del editor
+# Build outputs
+dist/
+**/dist/
+.angular/
+**/.angular/
+
+# IDE
 .vscode/
 .idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+atm-backend/
+
+/package.json
+/package-lock.json
+/vercel.json

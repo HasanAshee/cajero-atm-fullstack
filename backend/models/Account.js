@@ -3,12 +3,21 @@ const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['Retiro', 'Depósito'],
+    enum: ['Depósito', 'Retiro', 'Transferencia enviada', 'Transferencia recibida'],
     required: true
   },
   amount: {
     type: Number,
     required: true
+  },
+  counterpartyUsername: {
+    type: String,
+    default: null
+  },
+  description: {
+    type: String,
+    default: '',
+    maxlength: 200
   },
   date: {
     type: Date,
@@ -19,7 +28,9 @@ const transactionSchema = new mongoose.Schema({
 const accountSchema = new mongoose.Schema({
   user: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    trim: true
   },
   pin: {
     type: String,
@@ -28,10 +39,11 @@ const accountSchema = new mongoose.Schema({
   balance: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
+    min: 0
   },
   transactions: [transactionSchema]
-});
+}, { timestamps: true });
 
 const Account = mongoose.model('Account', accountSchema);
 

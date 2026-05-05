@@ -30,8 +30,12 @@ export class RegisterComponent {
   onRegister(): void {
     this.accountService.register(this.user, this.pin, this.initialBalance).subscribe({
       next: () => {
-        this.snackBar.open('Cuenta creada exitosamente. Ahora puedes iniciar sesión.', 'Cerrar', { duration: 3000, verticalPosition: 'top', panelClass: ['success-snackbar']});
-        this.router.navigate(['/login']);
+        this.snackBar.open('¡Bienvenido a M.H.M. Bank!', 'Cerrar', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.snackBar.open(err.error.message || 'Error al registrar la cuenta', 'Cerrar', { duration: 3000, verticalPosition: 'top', panelClass: ['error-snackbar']});

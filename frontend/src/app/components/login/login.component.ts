@@ -42,7 +42,7 @@ export class LoginComponent {
         }
         this.accountService.login(this.user, this.pin).subscribe({
             next: () => {
-                this.router.navigate(['/menu']);
+                this.router.navigate(['/dashboard']);
             },
             error: (err) => {
                 this.snackBar.open(err.error.message || 'Error en el login', 'Cerrar', { duration: 3000, verticalPosition: 'top', panelClass: ['error-snackbar']});

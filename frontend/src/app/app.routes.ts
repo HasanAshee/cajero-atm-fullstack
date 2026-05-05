@@ -1,45 +1,59 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
-
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () =>
+      import('./components/login/login.component').then((m) => m.LoginComponent)
   },
   {
     path: 'register',
-    loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent)
+    loadComponent: () =>
+      import('./components/register/register.component').then((m) => m.RegisterComponent)
   },
   {
-    path: 'menu',
-    loadComponent: () => import('./components/menu/menu.component').then(m => m.MenuComponent),
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent),
     canActivate: [authGuard]
   },
-    {
+
+  // ── Routes ──
+  {
+    path: 'menu',
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
+  },
+  {
     path: 'balance',
-    loadComponent: () => import('./components/balance/balance.component').then(m => m.BalanceComponent),
-    canActivate: [authGuard]
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
   {
     path: 'withdraw',
-    loadComponent: () => import('./components/withdraw/withdraw.component').then(m => m.WithdrawComponent),
-    canActivate: [authGuard]
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
   {
     path: 'deposit',
-    loadComponent: () => import('./components/deposit/deposit.component').then(m => m.DepositComponent),
-    canActivate: [authGuard]
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
   {
     path: 'history',
-    loadComponent: () => import('./components/history/history.component').then(m => m.HistoryComponent),
-    canActivate: [authGuard]
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
+
+  // ── Defaults ──
   {
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'
   },
-
+  {
+    path: '**',
+    redirectTo: '/login'
+  }
 ];
