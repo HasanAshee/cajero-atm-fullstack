@@ -1,35 +1,57 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AccountService } from '../../services/account.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AccountService } from '../../services/account.service';
+import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, RouterLink, AuthLayoutComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  user: string = '';
-  pin: string = '';
-  initialBalance: number = 0;
+  private accountService = inject(AccountService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
-  constructor(
-    private accountService: AccountService,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
+  user = signal('');
+  pin = signal('');
+  initialBalance = signal<number>(0);
+  loading = signal(false);
+  showPin = signal(false);
 
   onRegister(): void {
-    this.accountService.register(this.user, this.pin, this.initialBalance).subscribe({
+    const userValue = this.user().trim();
+    const pinValue = this.pin();
+    const balanceValue = this.initialBalance();
+
+    if (!userValue || !pinValue) {
+      this.snackBar.open('Usuario y PIN son requeridos.', 'Cerrar', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    if (!Number.isFinite(balanceValue) || balanceValue < 0) {
+      this.snackBar.open('El saldo inicial no puede ser negativo.', 'Cerrar', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    this.loading.set(true);
+
+    this.accountService.register(userValue, pinValue, balanceValue).subscribe({
       next: () => {
+        this.loading.set(false);
         this.snackBar.open('¡Bienvenido a M.H.M. Bank!', 'Cerrar', {
           duration: 3000,
           verticalPosition: 'top',
@@ -38,8 +60,18 @@ export class RegisterComponent {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.snackBar.open(err.error.message || 'Error al registrar la cuenta', 'Cerrar', { duration: 3000, verticalPosition: 'top', panelClass: ['error-snackbar']});
+        this.loading.set(false);
+        const message = err?.error?.message || 'Error al crear la cuenta.';
+        this.snackBar.open(message, 'Cerrar', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
+  }
+
+  togglePin(): void {
+    this.showPin.update((v) => !v);
   }
 }

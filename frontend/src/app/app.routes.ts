@@ -18,35 +18,6 @@ export const routes: Routes = [
       import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent),
     canActivate: [authGuard]
   },
-
-  // ── Routes ──
-  {
-    path: 'menu',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'balance',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'withdraw',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'deposit',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'history',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-
-  // ── Defaults ──
   {
     path: '',
     redirectTo: '/login',
