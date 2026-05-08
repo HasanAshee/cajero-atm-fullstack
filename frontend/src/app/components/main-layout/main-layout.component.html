@@ -1,0 +1,11 @@
+<div class="layout">
+  <app-sidebar
+    (depositClicked)="openDeposit()"
+    (withdrawClicked)="openWithdraw()"
+    (transferClicked)="openTransfer()"
+  ></app-sidebar>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

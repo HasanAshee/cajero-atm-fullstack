@@ -13,18 +13,39 @@ export const routes: Routes = [
       import('./components/register/register.component').then((m) => m.RegisterComponent)
   },
   {
-    path: 'dashboard',
-    loadComponent: () =>
-      import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent),
-    canActivate: [authGuard]
-  },
-  {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
+    loadComponent: () =>
+      import('./components/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () =>
+          import('./components/transactions-page/transactions-page.component').then(
+            (m) => m.TransactionsPageComponent
+          )
+      },
+      {
+        path: 'card',
+        loadComponent: () =>
+          import('./components/card-page/card-page.component').then(
+            (m) => m.CardPageComponent
+          )
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '**',
-    redirectTo: '/login'
+    redirectTo: 'dashboard'
   }
 ];

@@ -1,0 +1,66 @@
+<aside class="sidebar">
+
+  <!-- Brand -->
+  <header class="sidebar-brand">
+    <h1 class="brand-mark">M.H.M.</h1>
+    <p class="brand-text">BANK</p>
+  </header>
+
+  <!-- Navegación principal -->
+  <nav class="sidebar-section">
+    <p class="section-label">Navegación</p>
+    <ul class="nav-list">
+      @for (item of navItems; track item.path) {
+        <li>
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="nav-link-active"
+            class="nav-link"
+          >
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Acciones rápidas -->
+  <div class="sidebar-section">
+    <p class="section-label">Acciones rápidas</p>
+    <ul class="actions-list">
+      <li>
+        <button class="action-btn" (click)="depositClicked.emit()">
+          <span class="action-icon">↓</span>
+          <span class="action-label">Depositar</span>
+        </button>
+      </li>
+      <li>
+        <button class="action-btn" (click)="withdrawClicked.emit()">
+          <span class="action-icon">↑</span>
+          <span class="action-label">Retirar</span>
+        </button>
+      </li>
+      <li>
+        <button class="action-btn action-btn-primary" (click)="transferClicked.emit()">
+          <span class="action-icon">→</span>
+          <span class="action-label">Transferir</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <footer class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">
+        {{ userName()?.charAt(0)?.toUpperCase() ?? '?' }}
+      </div>
+      <div class="user-text">
+        <p class="user-name">{{ userName() }}</p>
+        <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </footer>
+
+</aside>

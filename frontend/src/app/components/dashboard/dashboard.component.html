@@ -1,19 +1,10 @@
 <div class="dashboard">
 
-  <!-- Header -->
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark">M.H.M</span>
-      <span class="brand-text">BANK</span>
-    </div>
-
-    <div class="user-area">
-      <span class="user-name">{{ userName() }}</span>
-      <button class="btn-ghost" (click)="logout()">Cerrar sesión</button>
-    </div>
+  <header class="page-header">
+    <h2 class="page-title">Hola, {{ userName() }}</h2>
+    <p class="page-subtitle">Resumen de tu cuenta</p>
   </header>
 
-  <!-- Loading state -->
   @if (loading()) {
     <div class="loading-state">Cargando tu cuenta…</div>
   } @else if (errorMessage()) {
@@ -25,49 +16,23 @@
 
     <!-- Cards superiores -->
     <section class="cards-grid">
-
-      <!-- Card Saldo -->
       <article class="card card-balance">
         <p class="card-label">Saldo disponible</p>
-        <h2 class="card-amount-large">
-          $ {{ balance() | number: '1.2-2' }}
-        </h2>
+        <h2 class="card-amount-large">$ {{ balance() | number: '1.2-2' }}</h2>
         <p class="card-hint">Cuenta principal</p>
       </article>
 
-      <!-- Card Ingresos del mes -->
       <article class="card card-income">
         <p class="card-label">Ingresos este mes</p>
-        <h3 class="card-amount-medium">
-          $ {{ monthlyIncome() | number: '1.2-2' }}
-        </h3>
+        <h3 class="card-amount-medium">$ {{ monthlyIncome() | number: '1.2-2' }}</h3>
         <p class="card-hint">Depósitos + Transferencias recibidas</p>
       </article>
 
-      <!-- Card Egresos del mes -->
       <article class="card card-expense">
         <p class="card-label">Egresos este mes</p>
-        <h3 class="card-amount-medium">
-          $ {{ monthlyExpenses() | number: '1.2-2' }}
-        </h3>
+        <h3 class="card-amount-medium">$ {{ monthlyExpenses() | number: '1.2-2' }}</h3>
         <p class="card-hint">Retiros + Transferencias enviadas</p>
       </article>
-    </section>
-
-    <!-- Acciones rápidas -->
-    <section class="actions-row">
-      <button class="action-btn" (click)="openDeposit()">
-        <span class="action-icon">↓</span>
-        <span>Depositar</span>
-      </button>
-      <button class="action-btn" (click)="openWithdraw()">
-        <span class="action-icon">↑</span>
-        <span>Retirar</span>
-      </button>
-      <button class="action-btn action-btn-primary" (click)="openTransfer()">
-        <span class="action-icon">→</span>
-        <span>Transferir</span>
-      </button>
     </section>
 
     <!-- Movimientos recientes -->
@@ -109,9 +74,7 @@
                 <p class="tx-amount" [class]="colorClassFor(tx.type)">
                   {{ signFor(tx.type) }} $ {{ tx.amount | number: '1.2-2' }}
                 </p>
-                <p class="tx-date">
-                  {{ tx.date | date: 'dd MMM' }}
-                </p>
+                <p class="tx-date">{{ tx.date | date: 'dd MMM' }}</p>
               </div>
             </li>
           }

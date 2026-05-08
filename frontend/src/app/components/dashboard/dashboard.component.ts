@@ -1,11 +1,9 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { BalanceMutationDialogComponent, BalanceMutationDialogData } from '../balance-mutation-dialog/balance-mutation-dialog.component';
+import { Subscription } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { Transaction } from '../../models/account.model';
-import { TransferDialogComponent, TransferDialogData } from '../transfer-dialog/transfer-dialog.component';
+import { MainLayoutComponent } from '../main-layout/main-layout.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,19 +12,15 @@ import { TransferDialogComponent, TransferDialogData } from '../transfer-dialog/
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
-  private router = inject(Router);
+  private balanceChangedSub?: Subscription;
 
-  // Status
   loading = signal(true);
   balance = signal(0);
   transactions = signal<Transaction[]>([]);
   errorMessage = signal<string | null>(null);
 
-  private dialog = inject(MatDialog);
-
-  // User Data
   userName = this.accountService.user;
 
   monthlyIncome = computed(() => {
@@ -49,6 +43,14 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+
+    this.balanceChangedSub = MainLayoutComponent.balanceChanged$.subscribe(() => {
+      this.loadDashboard();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.balanceChangedSub?.unsubscribe();
   }
 
   loadDashboard(): void {
@@ -84,65 +86,6 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-
-  // ─── Actions ───
-
-  openDeposit(): void {
-    const dialogRef = this.dialog.open(BalanceMutationDialogComponent, {
-      data: {
-        mode: 'deposit',
-        currentBalance: this.balance()
-      } as BalanceMutationDialogData,
-      autoFocus: 'first-tabbable',
-      restoreFocus: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.success) {
-        this.loadDashboard();
-      }
-    });
-  }
-
-  openWithdraw(): void {
-    const dialogRef = this.dialog.open(BalanceMutationDialogComponent, {
-      data: {
-        mode: 'withdraw',
-        currentBalance: this.balance()
-      } as BalanceMutationDialogData,
-      autoFocus: 'first-tabbable',
-      restoreFocus: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.success) {
-        this.loadDashboard();
-      }
-    });
-  }
-
-  openTransfer(): void {
-    const dialogRef = this.dialog.open(TransferDialogComponent, {
-      data: {
-        currentBalance: this.balance(),
-        currentUsername: this.userName() ?? ''
-      } as TransferDialogData,
-      autoFocus: 'first-tabbable',
-      restoreFocus: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.success) {
-        this.loadDashboard();
-      }
-    });
-  }
-
-  logout(): void {
-    this.accountService.logout();
-  }
-
-  // ─── Helpers ───
 
   private isInCurrentMonth(dateStr: string, now: Date): boolean {
     const d = new Date(dateStr);
