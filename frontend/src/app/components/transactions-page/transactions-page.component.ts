@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { Transaction, TransactionType } from '../../models/account.model';
 import { MainLayoutComponent } from '../main-layout/main-layout.component';
+import { TransactionDetailModalComponent } from '../../components/transaction-detail-modal/transaction-detail-modal.component';
+import { ReceiptPdfService } from '../../services/receipt-pdf.service';
 
 type TypeFilter = 'all' | TransactionType;
 type DateRange = 'all' | 'today' | 'week' | 'month' | 'year';
@@ -12,13 +14,14 @@ type DateRange = 'all' | 'today' | 'week' | 'month' | 'year';
 @Component({
   selector: 'app-transactions-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TransactionDetailModalComponent],
   templateUrl: './transactions-page.component.html',
   styleUrl: './transactions-page.component.css'
 })
 export class TransactionsPageComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private balanceChangedSub?: Subscription;
+  private receiptPdfService = inject(ReceiptPdfService);
 
   loading = signal(true);
   errorMessage = signal<string | null>(null);
@@ -28,6 +31,8 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   searchQuery = signal('');
   typeFilter = signal<TypeFilter>('all');
   dateRange = signal<DateRange>('all');
+
+  selectedTransaction = signal<Transaction | null>(null);
 
   filteredTransactions = computed(() => {
     const txs = this.allTransactions();
@@ -62,7 +67,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     });
   });
 
-  // Stats derivadas
+  // Stats 
   totalIncome = computed(() =>
     this.filteredTransactions()
       .filter((t) => t.type === 'Depósito' || t.type === 'Transferencia recibida')
@@ -82,7 +87,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       this.dateRange() !== 'all'
   );
 
-  // Opciones de los selects
   typeOptions: { value: TypeFilter; label: string }[] = [
     { value: 'all', label: 'Todos los tipos' },
     { value: 'Depósito', label: 'Depósitos' },
@@ -137,7 +141,22 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     this.dateRange.set('all');
   }
 
-  // ─── Helpers de UI ───
+  // ─── Modal ───
+
+  openDetail(tx: Transaction): void {
+    this.selectedTransaction.set(tx);
+  }
+
+  closeDetail(): void {
+    this.selectedTransaction.set(null);
+  }
+  
+  onDownloadPdf(tx: Transaction): void {
+    const user = this.accountService.getUserName();
+    this.receiptPdfService.generateReceipt(tx, user);
+  }
+
+  // ─── Helpers ───
 
   iconFor(type: Transaction['type']): string {
     switch (type) {

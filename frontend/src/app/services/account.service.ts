@@ -11,7 +11,9 @@ import {
   BalanceMutationResponse,
   Transaction,
   TransferRequest,
-  TransferResponse
+  TransferResponse,
+  FavoritesResponse,
+  FavoritesMutationResponse
 } from '../models/account.model';
 
 @Injectable({
@@ -19,6 +21,8 @@ import {
 })
 export class AccountService {
   private apiUrl = environment.apiUrl;
+  private _favorites = signal<string[]>([]);
+  readonly favorites = this._favorites.asReadonly();
 
   // Estado reactivo con signals
   private _user = signal<string | null>(this.readStoredUser());
@@ -72,6 +76,7 @@ export class AccountService {
     localStorage.removeItem(STORAGE_KEYS.ACCOUNT_ID);
     this._user.set(null);
     this._accountId.set(null);
+    this._favorites.set([]);
   }
 
   // ────────────────────────────────────────────────────────────
@@ -153,5 +158,41 @@ export class AccountService {
           )
         )
       );
+  }
+    
+  // ─── favorites ───
+
+  loadFavorites(): Observable<FavoritesResponse> {
+    return this.http
+      .get<FavoritesResponse>(`${this.apiUrl}/account/favorites`)
+      .pipe(
+        tap((response) => this._favorites.set(response.favorites))
+      );
+  }
+
+  addFavorite(username: string): Observable<FavoritesMutationResponse> {
+    return this.http
+      .post<FavoritesMutationResponse>(`${this.apiUrl}/account/favorites`, { username })
+      .pipe(
+        tap((response) => {
+          this._favorites.set(response.favorites);
+          this.openSnackBar('Favorito agregado.', 'success-snackbar');
+        })
+      );
+  }
+
+  removeFavorite(username: string): Observable<FavoritesMutationResponse> {
+    return this.http
+      .delete<FavoritesMutationResponse>(`${this.apiUrl}/account/favorites/${encodeURIComponent(username)}`)
+      .pipe(
+        tap((response) => {
+          this._favorites.set(response.favorites);
+          this.openSnackBar('Favorito eliminado.', 'success-snackbar');
+        })
+      );
+  }
+
+  isFavorite(username: string): boolean {
+    return this._favorites().includes(username);
   }
 }

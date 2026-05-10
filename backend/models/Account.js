@@ -42,7 +42,11 @@ const accountSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
-  transactions: [transactionSchema]
+  transactions: [transactionSchema],
+  favorites: {
+    type: [String],
+    default: []
+  }
 }, { timestamps: true });
 
 const Account = mongoose.model('Account', accountSchema);

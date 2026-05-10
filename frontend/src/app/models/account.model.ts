@@ -44,3 +44,12 @@ export interface BalanceMutationResponse {
   message: string;
   newBalance: number;
 }
+
+export interface FavoritesResponse {
+  favorites: string[];
+}
+
+export interface FavoritesMutationResponse {
+  message: string;
+  favorites: string[];
+}

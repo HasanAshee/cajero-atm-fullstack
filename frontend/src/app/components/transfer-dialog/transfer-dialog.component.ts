@@ -1,13 +1,16 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AccountService } from '../../services/account.service';
+import { FavoritesDialogComponent } from '../favorites-dialog/favorites-dialog.component';
 
 export interface TransferDialogData {
   currentBalance: number;
   currentUsername: string;
 }
+
+type ViewMode = 'form' | 'save-prompt';
 
 @Component({
   selector: 'app-transfer-dialog',
@@ -16,8 +19,9 @@ export interface TransferDialogData {
   templateUrl: './transfer-dialog.component.html',
   styleUrl: './transfer-dialog.component.css'
 })
-export class TransferDialogComponent {
+export class TransferDialogComponent implements OnInit {
   private accountService = inject(AccountService);
+  private dialog = inject(MatDialog);
   private dialogRef = inject(MatDialogRef<TransferDialogComponent>);
   data = inject<TransferDialogData>(MAT_DIALOG_DATA);
 
@@ -26,6 +30,15 @@ export class TransferDialogComponent {
   description = signal('');
   loading = signal(false);
   errorMessage = signal<string | null>(null);
+
+  favorites = this.accountService.favorites;
+  loadingFavorites = signal(false);
+
+  viewMode = signal<ViewMode>('form');
+  lastTransferRecipient = signal<string | null>(null);
+  lastTransferNewBalance = signal<number | null>(null);
+  lastTransferAmount = signal<number | null>(null);
+  savingFavorite = signal(false);
 
   isInvalid = computed(() => {
     const r = this.recipient().trim();
@@ -49,6 +62,33 @@ export class TransferDialogComponent {
     }
     return null;
   });
+
+  recipientIsAlreadyFavorite = computed(() => {
+    const r = this.lastTransferRecipient();
+    if (!r) return false;
+    return this.favorites().includes(r);
+  });
+
+  ngOnInit(): void {
+    this.loadingFavorites.set(true);
+    this.accountService.loadFavorites().subscribe({
+      next: () => this.loadingFavorites.set(false),
+      error: () => this.loadingFavorites.set(false)
+    });
+  }
+
+
+  selectFavorite(username: string): void {
+    this.recipient.set(username);
+    this.errorMessage.set(null);
+  }
+
+  openManageFavorites(): void {
+    this.dialog.open(FavoritesDialogComponent, {
+      autoFocus: 'first-tabbable',
+      restoreFocus: true
+    });
+  }
 
   onSubmit(): void {
     const recipientUsername = this.recipient().trim();
@@ -84,12 +124,15 @@ export class TransferDialogComponent {
       .subscribe({
         next: (response) => {
           this.loading.set(false);
-          this.dialogRef.close({
-            success: true,
-            newBalance: response.newBalance,
-            recipient: response.recipient,
-            amount: amountValue
-          });
+          this.lastTransferRecipient.set(response.recipient);
+          this.lastTransferNewBalance.set(response.newBalance);
+          this.lastTransferAmount.set(amountValue);
+
+          if (!this.accountService.isFavorite(response.recipient)) {
+            this.viewMode.set('save-prompt');
+          } else {
+            this.closeWithSuccess();
+          }
         },
         error: (err) => {
           this.loading.set(false);
@@ -101,5 +144,41 @@ export class TransferDialogComponent {
 
   onCancel(): void {
     this.dialogRef.close({ success: false });
+  }
+
+  // ─── Prompt post ───
+
+  onSaveAsFavorite(): void {
+    const username = this.lastTransferRecipient();
+    if (!username) {
+      this.closeWithSuccess();
+      return;
+    }
+
+    this.savingFavorite.set(true);
+
+    this.accountService.addFavorite(username).subscribe({
+      next: () => {
+        this.savingFavorite.set(false);
+        this.closeWithSuccess();
+      },
+      error: () => {
+        this.savingFavorite.set(false);
+        this.closeWithSuccess();
+      }
+    });
+  }
+
+  onSkipFavorite(): void {
+    this.closeWithSuccess();
+  }
+
+  private closeWithSuccess(): void {
+    this.dialogRef.close({
+      success: true,
+      newBalance: this.lastTransferNewBalance(),
+      recipient: this.lastTransferRecipient(),
+      amount: this.lastTransferAmount()
+    });
   }
 }

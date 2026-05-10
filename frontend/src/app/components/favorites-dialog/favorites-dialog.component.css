@@ -1,0 +1,302 @@
+:host {
+  display: block;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-width: 420px;
+  max-width: 520px;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ───── Header ───── */
+
+.dialog-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.dialog-subtitle {
+  font-size: 13px;
+  color: #a3a3a3;
+  margin: 0;
+}
+
+/* ───── Body ───── */
+
+.dialog-body {
+  padding: 20px 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ───── Add section ───── */
+
+.add-section {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a3a3a3;
+  margin-bottom: 8px;
+}
+
+.add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix-text {
+  position: absolute;
+  left: 14px;
+  color: #d4af37;
+  font-size: 16px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 14px 11px 32px;
+  background-color: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  color: #f5f5f5;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+  caret-color: #d4af37;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-input::placeholder {
+  color: #6b6b6b;
+}
+
+.btn-add {
+  padding: 11px 18px;
+  background-color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+  color: #0a0a0a;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn-add:hover:not(:disabled) {
+  background-color: #b8941f;
+  border-color: #b8941f;
+}
+
+.btn-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ───── Error ───── */
+
+.error-message {
+  padding: 10px 14px;
+  background-color: #ef444422;
+  border: 1px solid #ef444444;
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* ───── Lista ───── */
+
+.list-section {
+  margin-top: 4px;
+}
+
+.list-header {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a3a3a3;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #242424;
+}
+
+.list-count {
+  color: #6b6b6b;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+.state-text {
+  text-align: center;
+  padding: 24px 8px;
+  color: #a3a3a3;
+  font-size: 13px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px 8px;
+  color: #a3a3a3;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.empty-hint {
+  font-size: 12px !important;
+  color: #6b6b6b !important;
+  margin-top: 4px !important;
+}
+
+.favorites-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.favorite-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #242424;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.15s;
+}
+
+.favorite-item:hover {
+  border-color: #2a2a2a;
+}
+
+.favorite-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.favorite-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1a1a1a;
+  color: #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.favorite-username {
+  font-size: 14px;
+  color: #e8dcc4;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-remove {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #a3a3a3;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover:not(:disabled) {
+  background-color: #ef444422;
+  color: #ef4444;
+}
+
+.btn-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ───── Footer ───── */
+
+.dialog-footer {
+  display: flex;
+  gap: 8px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  border: 1px solid;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: #2a2a2a;
+  color: #a3a3a3;
+}
+
+.btn-ghost:hover {
+  border-color: #6b6b6b;
+  color: #f5f5f5;
+}

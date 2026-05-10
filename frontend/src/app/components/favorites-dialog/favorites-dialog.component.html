@@ -1,0 +1,102 @@
+<div class="dialog">
+  <header class="dialog-header">
+    <h2 class="dialog-title">Favoritos</h2>
+    <p class="dialog-subtitle">Tus contactos guardados para transferencias rápidas</p>
+  </header>
+
+  <div class="dialog-body">
+
+    <!-- Agregar nuevo -->
+    <div class="add-section">
+      <label class="form-label" for="newFavorite">Agregar usuario</label>
+      <div class="add-row">
+        <div class="input-wrapper">
+          <span class="input-prefix-text">&#64;</span>
+          <input
+            id="newFavorite"
+            type="text"
+            class="form-input"
+            [ngModel]="newUsername()"
+            (ngModelChange)="newUsername.set($event)"
+            placeholder="usuario_a_guardar"
+            autocomplete="off"
+            autocapitalize="off"
+            [disabled]="adding()"
+            (keyup.enter)="onAdd()"
+          />
+        </div>
+        <button
+          type="button"
+          class="btn-add"
+          (click)="onAdd()"
+          [disabled]="isAddInvalid()"
+        >
+          @if (adding()) {
+            ···
+          } @else {
+            Agregar
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    <!-- Lista -->
+    <div class="list-section">
+      <p class="list-header">
+        Mis favoritos
+        @if (!loadingList()) {
+          <span class="list-count">({{ favorites().length }})</span>
+        }
+      </p>
+
+      @if (loadingList()) {
+        <div class="state-text">Cargando favoritos…</div>
+      } @else if (favorites().length === 0) {
+        <div class="empty-state">
+          <p>Todavía no tenés favoritos.</p>
+          <p class="empty-hint">
+            Agregá usuarios para transferir más rápido.
+          </p>
+        </div>
+      } @else {
+        <ul class="favorites-list">
+          @for (username of favorites(); track username) {
+            <li class="favorite-item">
+              <div class="favorite-info">
+                <div class="favorite-avatar">
+                  {{ username.charAt(0).toUpperCase() }}
+                </div>
+                <span class="favorite-username">&#64;{{ username }}</span>
+              </div>
+              <button
+                type="button"
+                class="btn-remove"
+                (click)="onRemove(username)"
+                [disabled]="removingUser() === username"
+                [attr.aria-label]="'Eliminar ' + username"
+              >
+                @if (removingUser() === username) {
+                  ···
+                } @else {
+                  ×
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+  </div>
+
+  <footer class="dialog-footer">
+    <button type="button" class="btn btn-ghost" (click)="onClose()">
+      Cerrar
+    </button>
+  </footer>
+</div>

@@ -1,105 +1,200 @@
 <div class="dialog">
-  <header class="dialog-header">
-    <h2 class="dialog-title">Transferir dinero</h2>
-    <p class="dialog-subtitle">Enviá fondos a otra cuenta de M.H.M. Bank</p>
-  </header>
 
-  <div class="dialog-body">
+  @if (viewMode() === 'form') {
 
-    <!-- Saldo de referencia -->
-    <div class="balance-ref">
-      <span class="balance-ref-label">Saldo disponible</span>
-      <span class="balance-ref-value">$ {{ data.currentBalance | number: '1.2-2' }}</span>
-    </div>
+    <header class="dialog-header">
+      <h2 class="dialog-title">Transferir dinero</h2>
+      <p class="dialog-subtitle">Enviá fondos a otra cuenta de M.H.M. Bank</p>
+    </header>
 
-    <!-- Destinatario -->
-    <div class="form-group">
-      <label class="form-label" for="recipient">Destinatario</label>
-      <div class="input-wrapper">
-        <span class="input-prefix-text">&#64;</span>
-        <input
-          id="recipient"
-          type="text"
-          class="form-input form-input-text"
-          [ngModel]="recipient()"
-          (ngModelChange)="recipient.set($event)"
-          placeholder="usuario_destinatario"
-          autocomplete="off"
-          autocapitalize="off"
-          [disabled]="loading()"
-        />
+    <div class="dialog-body">
+
+      <!-- Saldo de referencia -->
+      <div class="balance-ref">
+        <span class="balance-ref-label">Saldo disponible</span>
+        <span class="balance-ref-value">$ {{ data.currentBalance | number: '1.2-2' }}</span>
       </div>
-    </div>
 
-    <!-- Monto -->
-    <div class="form-group">
-      <label class="form-label" for="amount">Monto</label>
-      <div class="input-wrapper">
-        <span class="input-prefix">$</span>
-        <input
-          id="amount"
-          type="number"
-          class="form-input"
-          [ngModel]="amount()"
-          (ngModelChange)="amount.set($event)"
-          placeholder="0.00"
-          min="0"
-          step="0.01"
-          [disabled]="loading()"
-        />
-      </div>
-    </div>
-
-    <!-- Descripción opcional -->
-    <div class="form-group">
-      <label class="form-label" for="description">
-        Motivo <span class="form-label-optional">(opcional)</span>
-      </label>
-      <input
-        id="description"
-        type="text"
-        class="form-input form-input-plain"
-        [ngModel]="description()"
-        (ngModelChange)="description.set($event)"
-        placeholder="ej. alquiler, almuerzo, devolución…"
-        maxlength="200"
-        [disabled]="loading()"
-        (keyup.enter)="onSubmit()"
-      />
-    </div>
-
-    <!-- Validation hint inline -->
-    @if (validationHint() && !errorMessage()) {
-      <div class="validation-hint">{{ validationHint() }}</div>
-    }
-
-    <!-- Error message backend -->
-    @if (errorMessage()) {
-      <div class="error-message">{{ errorMessage() }}</div>
-    }
-
-  </div>
-
-  <footer class="dialog-footer">
-    <button
-      type="button"
-      class="btn btn-ghost"
-      (click)="onCancel()"
-      [disabled]="loading()"
-    >
-      Cancelar
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary"
-      (click)="onSubmit()"
-      [disabled]="loading() || isInvalid()"
-    >
-      @if (loading()) {
-        Procesando…
-      } @else {
-        Confirmar
+      <!-- Favoritos -->
+      @if (!loadingFavorites() && favorites().length > 0) {
+        <div class="favorites-section">
+          <div class="favorites-header">
+            <span class="favorites-label">Favoritos</span>
+            <button
+              type="button"
+              class="btn-link"
+              (click)="openManageFavorites()"
+              [disabled]="loading()"
+            >
+              Gestionar
+            </button>
+          </div>
+          <div class="favorites-chips">
+            @for (fav of favorites(); track fav) {
+              <button
+                type="button"
+                class="chip"
+                [class.chip-active]="recipient() === fav"
+                (click)="selectFavorite(fav)"
+                [disabled]="loading()"
+              >
+                <span class="chip-avatar">{{ fav.charAt(0).toUpperCase() }}</span>
+                <span class="chip-text">&#64;{{ fav }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      } @else if (!loadingFavorites() && favorites().length === 0) {
+        <div class="favorites-section favorites-section-empty">
+          <span class="favorites-label">Aún no tenés favoritos</span>
+          <button
+            type="button"
+            class="btn-link"
+            (click)="openManageFavorites()"
+            [disabled]="loading()"
+          >
+            Gestionar
+          </button>
+        </div>
       }
-    </button>
-  </footer>
+
+      <!-- Destinatario -->
+      <div class="form-group">
+        <label class="form-label" for="recipient">Destinatario</label>
+        <div class="input-wrapper">
+          <span class="input-prefix-text">&#64;</span>
+          <input
+            id="recipient"
+            type="text"
+            class="form-input form-input-text"
+            [ngModel]="recipient()"
+            (ngModelChange)="recipient.set($event)"
+            placeholder="usuario_destinatario"
+            autocomplete="off"
+            autocapitalize="off"
+            [disabled]="loading()"
+          />
+        </div>
+      </div>
+
+      <!-- Monto -->
+      <div class="form-group">
+        <label class="form-label" for="amount">Monto</label>
+        <div class="input-wrapper">
+          <span class="input-prefix">$</span>
+          <input
+            id="amount"
+            type="number"
+            class="form-input"
+            [ngModel]="amount()"
+            (ngModelChange)="amount.set($event)"
+            placeholder="0.00"
+            min="0"
+            step="0.01"
+            [disabled]="loading()"
+          />
+        </div>
+      </div>
+
+      <!-- Descripción opcional -->
+      <div class="form-group">
+        <label class="form-label" for="description">
+          Motivo <span class="form-label-optional">(opcional)</span>
+        </label>
+        <input
+          id="description"
+          type="text"
+          class="form-input form-input-plain"
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          placeholder="ej. alquiler, almuerzo, devolución…"
+          maxlength="200"
+          [disabled]="loading()"
+          (keyup.enter)="onSubmit()"
+        />
+      </div>
+
+      @if (validationHint() && !errorMessage()) {
+        <div class="validation-hint">{{ validationHint() }}</div>
+      }
+
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+
+    </div>
+
+    <footer class="dialog-footer">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        (click)="onCancel()"
+        [disabled]="loading()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSubmit()"
+        [disabled]="loading() || isInvalid()"
+      >
+        @if (loading()) {
+          Procesando…
+        } @else {
+          Confirmar
+        }
+      </button>
+    </footer>
+
+  } @else if (viewMode() === 'save-prompt') {
+
+    <!-- Pantalla post -->
+
+    <header class="dialog-header">
+      <h2 class="dialog-title">Transferencia realizada</h2>
+      <p class="dialog-subtitle">
+        Enviaste $ {{ lastTransferAmount() | number: '1.2-2' }} a
+        <span class="cream">&#64;{{ lastTransferRecipient() }}</span>
+      </p>
+    </header>
+
+    <div class="dialog-body">
+      <div class="prompt-hero">
+        <div class="prompt-icon">★</div>
+        <p class="prompt-question">
+          ¿Querés guardar a <span class="cream">&#64;{{ lastTransferRecipient() }}</span>
+          como favorito?
+        </p>
+        <p class="prompt-hint">
+          Vas a poder elegirlo con un click en tu próxima transferencia.
+        </p>
+      </div>
+    </div>
+
+    <footer class="dialog-footer">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        (click)="onSkipFavorite()"
+        [disabled]="savingFavorite()"
+      >
+        Ahora no
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSaveAsFavorite()"
+        [disabled]="savingFavorite()"
+      >
+        @if (savingFavorite()) {
+          Guardando…
+        } @else {
+          Guardar favorito
+        }
+      </button>
+    </footer>
+
+  }
+
 </div>

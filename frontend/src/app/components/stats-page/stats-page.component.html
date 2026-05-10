@@ -1,0 +1,112 @@
+<div class="stats-page">
+
+  <header class="page-header">
+    <h2 class="page-title">Estadísticas</h2>
+    <p class="page-subtitle">Análisis financiero de tu cuenta</p>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">Cargando estadísticas…</div>
+  } @else if (errorMessage()) {
+    <div class="error-state">
+      {{ errorMessage() }}
+      <button class="btn-link" (click)="loadData()">Reintentar</button>
+    </div>
+  } @else {
+
+    <!-- Selector -->
+    <div class="period-selector">
+      @for (option of periodOptions; track option.value) {
+        <button
+          type="button"
+          class="period-btn"
+          [class.period-btn-active]="period() === option.value"
+          (click)="setPeriod(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Stats row -->
+    <section class="stats-row">
+      <article class="stat-card">
+        <p class="stat-label">Ingresos totales</p>
+        <p class="stat-value stat-value-positive">
+          + $ {{ totalIncome() | number: '1.2-2' }}
+        </p>
+        <p class="stat-hint">Depósitos y transferencias recibidas</p>
+      </article>
+
+      <article class="stat-card">
+        <p class="stat-label">Egresos totales</p>
+        <p class="stat-value stat-value-negative">
+          - $ {{ totalExpenses() | number: '1.2-2' }}
+        </p>
+        <p class="stat-hint">Retiros y transferencias enviadas</p>
+      </article>
+
+      <article class="stat-card">
+        <p class="stat-label">Balance neto</p>
+        <p
+          class="stat-value"
+          [class.stat-value-positive]="netFlow() >= 0"
+          [class.stat-value-negative]="netFlow() < 0"
+        >
+          {{ netFlow() >= 0 ? '+' : '' }} $ {{ netFlow() | number: '1.2-2' }}
+        </p>
+        <p class="stat-hint">{{ transactionCount() }} transacciones</p>
+      </article>
+    </section>
+
+    <!-- Line chart -->
+    <section class="chart-section chart-section-wide">
+      <header class="chart-header">
+        <h3 class="chart-title">Evolución del balance</h3>
+        <p class="chart-subtitle">Cómo cambió tu saldo en el período seleccionado</p>
+      </header>
+      <div class="chart-canvas-wrapper">
+        @if (filteredTransactions().length === 0) {
+          <div class="chart-empty">No hay transacciones en este período.</div>
+        } @else {
+          <canvas #balanceChart></canvas>
+        }
+      </div>
+    </section>
+
+    <!-- Charts secundarios -->
+    <section class="charts-grid">
+
+      <article class="chart-section">
+        <header class="chart-header">
+          <h3 class="chart-title">Egresos por tipo</h3>
+          <p class="chart-subtitle">Cómo se distribuyen tus salidas</p>
+        </header>
+        <div class="chart-canvas-wrapper chart-canvas-square">
+          @if (totalExpenses() === 0) {
+            <div class="chart-empty">No hay egresos en este período.</div>
+          } @else {
+            <canvas #donutChart></canvas>
+          }
+        </div>
+      </article>
+
+      <article class="chart-section">
+        <header class="chart-header">
+          <h3 class="chart-title">Ingresos vs Egresos</h3>
+          <p class="chart-subtitle">Comparación semana a semana</p>
+        </header>
+        <div class="chart-canvas-wrapper chart-canvas-square">
+          @if (filteredTransactions().length === 0) {
+            <div class="chart-empty">No hay datos suficientes.</div>
+          } @else {
+            <canvas #barChart></canvas>
+          }
+        </div>
+      </article>
+
+    </section>
+
+  }
+
+</div>

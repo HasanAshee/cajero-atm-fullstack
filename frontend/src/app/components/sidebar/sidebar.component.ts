@@ -21,6 +21,7 @@ export class SidebarComponent {
 
   navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/stats', label: 'Estadísticas', icon: '📈' },
     { path: '/card', label: 'Tarjeta', icon: '💳' },
     { path: '/transactions', label: 'Transacciones', icon: '📜' },
     { path: '/settings', label: 'Ajustes', icon: '⚙️' }

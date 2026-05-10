@@ -1,0 +1,61 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-card" role="dialog" aria-modal="true">
+
+    <header class="modal-header">
+      <h3 class="modal-title">Detalle de operación</h3>
+      <button class="btn-close" (click)="onClose()" aria-label="Cerrar">×</button>
+    </header>
+
+    <div class="modal-body">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-icon" [class.hero-icon-positive]="signFor(transaction.type) === '+'">
+          {{ iconFor(transaction.type) }}
+        </div>
+        <p class="hero-type">{{ transaction.type }}</p>
+        <p class="hero-amount" [class]="colorClassFor(transaction.type)">
+          {{ signFor(transaction.type) }} $ {{ transaction.amount | number: '1.2-2' }}
+        </p>
+      </div>
+
+      <!-- Datos -->
+      <dl class="details">
+        <div class="detail-row">
+          <dt>Fecha y hora</dt>
+          <dd>{{ transaction.date | date: 'dd MMM yyyy, HH:mm:ss' }}</dd>
+        </div>
+
+        @if (transaction.counterpartyUsername) {
+          <div class="detail-row">
+            <dt>
+              {{ transaction.type === 'Transferencia enviada' ? 'Destinatario' : 'Remitente' }}
+            </dt>
+            <dd class="detail-cream">{{ '@' + transaction.counterpartyUsername }}</dd>
+          </div>
+        }
+
+        @if (transaction.description) {
+          <div class="detail-row">
+            <dt>Descripción</dt>
+            <dd>{{ transaction.description }}</dd>
+          </div>
+        }
+
+        <div class="detail-row">
+          <dt>N° de operación</dt>
+          <dd class="detail-mono">{{ shortId(transaction._id) }}</dd>
+        </div>
+      </dl>
+
+    </div>
+
+    <footer class="modal-footer">
+      <button class="btn-secondary" (click)="onClose()">Cerrar</button>
+      <button class="btn-primary" (click)="onDownload()">
+        Descargar comprobante PDF
+      </button>
+    </footer>
+
+  </div>
+</div>

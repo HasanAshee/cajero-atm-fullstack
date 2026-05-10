@@ -95,7 +95,14 @@
       } @else {
         <ul class="transactions-list">
           @for (tx of filteredTransactions(); track tx._id || tx.date) {
-            <li class="transaction-item">
+            <li
+              class="transaction-item"
+              (click)="openDetail(tx)"
+              tabindex="0"
+              role="button"
+              (keydown.enter)="openDetail(tx)"
+              (keydown.space)="openDetail(tx); $event.preventDefault()"
+            >
               <div class="tx-icon" [class.tx-icon-positive]="signFor(tx.type) === '+'">
                 {{ iconFor(tx.type) }}
               </div>
@@ -129,6 +136,15 @@
       }
     </section>
 
+  }
+
+  <!-- Modal detail -->
+  @if (selectedTransaction(); as tx) {
+    <app-transaction-detail-modal
+      [transaction]="tx"
+      (close)="closeDetail()"
+      (downloadPdf)="onDownloadPdf($event)"
+    />
   }
 
 </div>

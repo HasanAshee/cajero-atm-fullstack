@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const Account = require('../models/Account');
 
 router.use(auth);
 
-// GET /api/account/me
+// GET
 router.get('/me', async (req, res) => {
   try {
     const account = req.account;
@@ -20,7 +21,7 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// GET /api/account/balance
+// GET
 router.get('/balance', async (req, res) => {
   try {
     res.json({ balance: req.account.balance });
@@ -42,12 +43,11 @@ router.get('/history', async (req, res) => {
   }
 });
 
-// POST /api/account/deposit
+// POST
 router.post('/deposit', async (req, res) => {
   try {
     const { amount } = req.body;
 
-    // Validar amount
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
       return res.status(400).json({ message: 'Monto inválido' });
@@ -68,7 +68,7 @@ router.post('/deposit', async (req, res) => {
   }
 });
 
-// POST /api/account/withdraw
+// POST
 router.post('/withdraw', async (req, res) => {
   try {
     const { amount } = req.body;
@@ -97,9 +97,7 @@ router.post('/withdraw', async (req, res) => {
   }
 });
 
-module.exports = router;
-
-// POST /api/account/transfer
+// POST
 router.post('/transfer', async (req, res) => {
   try {
     const { recipientUsername, amount, description } = req.body;
@@ -124,7 +122,6 @@ router.post('/transfer', async (req, res) => {
       return res.status(400).json({ message: 'Fondos insuficientes' });
     }
 
-    const Account = require('../models/Account');
     const recipient = await Account.findOne({ user: trimmedRecipient });
     if (!recipient) {
       return res.status(404).json({ message: 'Destinatario no encontrado' });
@@ -162,3 +159,91 @@ router.post('/transfer', async (req, res) => {
     res.status(500).send('Error en el servidor');
   }
 });
+
+// ──────────────────────────────────────────────────────────────
+// FAVORITOS
+// ──────────────────────────────────────────────────────────────
+
+// GET
+router.get('/favorites', async (req, res) => {
+  try {
+    res.json({ favorites: req.account.favorites });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
+// POST
+router.post('/favorites', async (req, res) => {
+  try {
+    const { username } = req.body;
+    const account = req.account;
+
+    if (!username || typeof username !== 'string') {
+      return res.status(400).json({ message: 'Usuario inválido' });
+    }
+
+    const trimmed = username.trim();
+
+    if (!trimmed) {
+      return res.status(400).json({ message: 'Usuario inválido' });
+    }
+
+    if (trimmed === account.user) {
+      return res.status(400).json({ message: 'No podés agregarte a vos mismo como favorito' });
+    }
+
+    if (account.favorites.includes(trimmed)) {
+      return res.status(400).json({ message: 'El usuario ya está en favoritos' });
+    }
+
+    const target = await Account.findOne({ user: trimmed });
+    if (!target) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    account.favorites.push(target.user);
+    await account.save();
+
+    res.json({
+      message: 'Favorito agregado',
+      favorites: account.favorites
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
+// DELETE
+router.delete('/favorites/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const account = req.account;
+
+    const trimmed = (username ?? '').trim();
+    if (!trimmed) {
+      return res.status(400).json({ message: 'Usuario inválido' });
+    }
+
+    const before = account.favorites.length;
+    account.favorites = account.favorites.filter((u) => u !== trimmed);
+
+    if (account.favorites.length === before) {
+      return res.status(404).json({ message: 'Favorito no encontrado' });
+    }
+
+    await account.save();
+
+    res.json({
+      message: 'Favorito eliminado',
+      favorites: account.favorites
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
+module.exports = router;

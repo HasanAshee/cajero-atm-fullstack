@@ -38,6 +38,13 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'stats',
+        loadComponent: () =>
+          import('./components/stats-page/stats-page.component').then(
+            (m) => m.StatsPageComponent
+          )
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
