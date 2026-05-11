@@ -87,4 +87,40 @@ router.post('/login', async (req, res) => {
   }
 });
 
+const auth = require('../middleware/auth');
+
+// POST
+router.post('/change-pin', auth, async (req, res) => {
+  try {
+    const { currentPin, newPin } = req.body;
+    const account = req.account;
+
+    if (!currentPin || !newPin) {
+      return res.status(400).json({ message: 'PIN actual y nuevo son obligatorios' });
+    }
+
+    if (typeof newPin !== 'string' || newPin.length < 4) {
+      return res.status(400).json({ message: 'El nuevo PIN debe tener al menos 4 caracteres' });
+    }
+
+    if (currentPin === newPin) {
+      return res.status(400).json({ message: 'El nuevo PIN debe ser distinto al actual' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPin, account.pin);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'El PIN actual es incorrecto' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    account.pin = await bcrypt.hash(newPin, salt);
+    await account.save();
+
+    res.json({ message: 'PIN actualizado correctamente' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error en el servidor');
+  }
+});
+
 module.exports = router;

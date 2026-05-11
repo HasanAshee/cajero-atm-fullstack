@@ -53,3 +53,12 @@ export interface FavoritesMutationResponse {
   message: string;
   favorites: string[];
 }
+
+export interface ChangePinRequest {
+  currentPin: string;
+  newPin: string;
+}
+
+export interface ChangePinResponse {
+  message: string;
+}

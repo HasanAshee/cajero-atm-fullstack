@@ -13,7 +13,9 @@ import {
   TransferRequest,
   TransferResponse,
   FavoritesResponse,
-  FavoritesMutationResponse
+  FavoritesMutationResponse,
+  ChangePinResponse,
+  ChangePinRequest
 } from '../models/account.model';
 
 @Injectable({
@@ -195,4 +197,13 @@ export class AccountService {
   isFavorite(username: string): boolean {
     return this._favorites().includes(username);
   }
+
+  changePin(request: ChangePinRequest): Observable<ChangePinResponse> {
+    return this.http
+      .post<ChangePinResponse>(`${this.apiUrl}/auth/change-pin`, request)
+      .pipe(
+        tap(() => this.openSnackBar('PIN actualizado correctamente.', 'success-snackbar'))
+      );
+  }
+
 }

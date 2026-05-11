@@ -1,0 +1,136 @@
+<div class="settings-page">
+
+  <header class="page-header">
+    <h2 class="page-title">Ajustes</h2>
+    <p class="page-subtitle">Gestioná tu cuenta de M.H.M. Bank</p>
+  </header>
+
+  <!-- Cuenta -->
+  <section class="settings-section">
+    <header class="section-header">
+      <h3 class="section-title">Cuenta</h3>
+    </header>
+    <div class="section-body">
+      <div class="info-row">
+        <span class="info-label">Usuario</span>
+        <span class="info-value cream">&#64;{{ userName() }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seguridad -->
+  <section class="settings-section">
+    <header class="section-header">
+      <h3 class="section-title">Seguridad</h3>
+      <p class="section-description">Cambiá tu PIN de acceso</p>
+    </header>
+
+    <div class="section-body">
+
+      <div class="form-group">
+        <label class="form-label" for="currentPin">PIN actual</label>
+        <div class="input-wrapper">
+          <input
+            id="currentPin"
+            [type]="showCurrent() ? 'text' : 'password'"
+            class="form-input"
+            [ngModel]="currentPin()"
+            (ngModelChange)="currentPin.set($event)"
+            placeholder="••••"
+            autocomplete="current-password"
+            inputmode="numeric"
+            [disabled]="loading()"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            (click)="toggleShowCurrent()"
+            [attr.aria-label]="showCurrent() ? 'Ocultar PIN' : 'Mostrar PIN'"
+          >
+            {{ showCurrent() ? '🙈' : '👁' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="newPin">Nuevo PIN</label>
+        <div class="input-wrapper">
+          <input
+            id="newPin"
+            [type]="showNew() ? 'text' : 'password'"
+            class="form-input"
+            [ngModel]="newPin()"
+            (ngModelChange)="newPin.set($event)"
+            placeholder="Mínimo 4 caracteres"
+            autocomplete="new-password"
+            inputmode="numeric"
+            [disabled]="loading()"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            (click)="toggleShowNew()"
+            [attr.aria-label]="showNew() ? 'Ocultar PIN' : 'Mostrar PIN'"
+          >
+            {{ showNew() ? '🙈' : '👁' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPin">Confirmar nuevo PIN</label>
+        <div class="input-wrapper">
+          <input
+            id="confirmPin"
+            [type]="showConfirm() ? 'text' : 'password'"
+            class="form-input"
+            [ngModel]="confirmPin()"
+            (ngModelChange)="confirmPin.set($event)"
+            placeholder="Repetí el nuevo PIN"
+            autocomplete="new-password"
+            inputmode="numeric"
+            [disabled]="loading()"
+            (keyup.enter)="onSubmit()"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            (click)="toggleShowConfirm()"
+            [attr.aria-label]="showConfirm() ? 'Ocultar PIN' : 'Mostrar PIN'"
+          >
+            {{ showConfirm() ? '🙈' : '👁' }}
+          </button>
+        </div>
+      </div>
+
+      @if (validationHint() && !errorMessage()) {
+        <div class="validation-hint">{{ validationHint() }}</div>
+      }
+
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+
+      @if (successMessage()) {
+        <div class="success-message">{{ successMessage() }}</div>
+      }
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="loading() || isInvalid()"
+        >
+          @if (loading()) {
+            Actualizando…
+          } @else {
+            Actualizar PIN
+          }
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+</div>
